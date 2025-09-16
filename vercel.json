@@ -1,13 +1,9 @@
 {
-    "builds": [{
-      "src": "locallibrary/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.3" }
-    }],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "locallibrary/wsgi.py"
-      }
-    ]
+  "version": 2,
+  "builds": [
+    { "src": "mi_proyecto/wsgi.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "mi_proyecto/wsgi.py" }
+  ]
 }
