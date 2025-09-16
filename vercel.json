@@ -1,13 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput",
   "functions": {
     "api/**/*.py": {
       "maxDuration": 10
     }
   },
   "rewrites": [
-    { "source": "/static/(.*)", "destination": "/staticfiles/$1" },
     { "source": "/(.*)", "destination": "/api/index.py" }
   ]
 }
+
