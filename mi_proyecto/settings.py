@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'django_cors_headers" if False else "corsheaders',
+    'corsheaders',
     'asistencia',
 ]
 
@@ -142,3 +142,4 @@ MEDIA_ROOT = BASE_DIR / "media"
 CORS_ALLOWED_ORIGINS = [
     "https://tu-app.netlify.app"
 ]
+
