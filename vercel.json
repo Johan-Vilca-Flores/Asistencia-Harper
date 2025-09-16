@@ -1,12 +1,13 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/**/*.py": {
-      "maxDuration": 10
-    }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.py" }
-  ]
+    "builds": [{
+      "src": "locallibrary/wsgi.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.3" }
+    }],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "locallibrary/wsgi.py"
+      }
+    ]
 }
-
