@@ -140,7 +140,8 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # CORS (si frontend está en Netlify)
 CORS_ALLOWED_ORIGINS = [
-    "https://tu-app.netlify.app"
+    "https://68ccbbb160272854d34ce60e--shimmering-biscochitos-cdba6b.netlify.app"
 ]
+
 
 
