@@ -142,6 +142,8 @@ MEDIA_ROOT = BASE_DIR / "media"
 CORS_ALLOWED_ORIGINS = [
     "https://68e316643b140c0b94f475e3--harperasistencia.netlify.app"
 ]
+APPEND_SLASH = False
+
 
 
 
