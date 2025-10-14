@@ -25,3 +25,4 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"Asistencia de {self.student} el {self.date}"
+
