@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
 ]
-
+ 
 
 # Application definition
 
@@ -143,6 +143,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://68e316643b140c0b94f475e3--harperasistencia.netlify.app"
 ]
 APPEND_SLASH = False
+
 
 
 
