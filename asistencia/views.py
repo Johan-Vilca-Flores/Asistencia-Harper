@@ -27,7 +27,7 @@ class CheckInView(APIView):
             return Response({"detail": "Alumno no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
         today = timezone.localdate()
-        att, created = Attendance.objects.get_or_create(student=student, date=today)
+        att, created = Attendance.objects.get_or_create(student=student, date=today, defaults={"check_in": timezone.now()})
 
         if att.check_in is None:
             att.check_in = timezone.now()
@@ -112,3 +112,4 @@ class AttendanceListView(ListAPIView):
             qs = qs.filter(student__dni=dni)
 
         return qs
+
