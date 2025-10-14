@@ -21,7 +21,8 @@ from django.conf.urls.static import static
 from asistencia.views import CheckInView, CheckOutView, AttendanceListView
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/attendances/check-in/", CheckInView.as_view(), name="attendance-check-in"),
-    path("api/attendances/check-out/", CheckOutView.as_view(), name="attendance-check-out"),
+    path("api/attendances/check_in/", CheckInView.as_view(), name="attendance-check_in"),
+    path("api/attendances/check_out/", CheckOutView.as_view(), name="attendance-check_out"),
     path("api/attendances/", AttendanceListView.as_view(), name="attendance-list"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
