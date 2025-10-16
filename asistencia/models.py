@@ -19,10 +19,12 @@ class Attendance(models.Model):
     date = models.DateField(default=timezone.localdate, editable=False)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["student", "date"], name="uniq_attendance_student_date")
-        ]
+        ordering = ['-date', '-check_in']
+        ##constraints = [
+           ## models.UniqueConstraint(fields=["student", "date"], name="uniq_attendance_student_date")
+       ##]
 
     def __str__(self):
         return f"Asistencia de {self.student} el {self.date}"
+
 
