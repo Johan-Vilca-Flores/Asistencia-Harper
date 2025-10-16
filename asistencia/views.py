@@ -93,18 +93,15 @@ class AttendanceListView(ListAPIView):
             .select_related("student")
             .order_by("-date", "-check_in")
         )
-
-        # ?date=YYYY-MM-DD  (por defecto: hoy)
+# Esto movi ojo 
+       # Filtro opcional por fecha: ?date=YYYY-MM-DD
         date_str = self.request.query_params.get("date")
         if date_str:
             try:
                 target_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                qs = qs.filter(date=target_date)
             except ValueError:
-                # Si viene mal la fecha, devuelve hoy (o podrías lanzar error 400)
-                target_date = timezone.localdate()
-        else:
-            target_date = timezone.localdate()
-        qs = qs.filter(date=target_date)
+                pass  # ignora formato inválido
 
         # Filtro opcional por DNI: ?dni=12345678
         dni = self.request.query_params.get("dni")
@@ -112,4 +109,5 @@ class AttendanceListView(ListAPIView):
             qs = qs.filter(student__dni=dni)
 
         return qs
+
 
