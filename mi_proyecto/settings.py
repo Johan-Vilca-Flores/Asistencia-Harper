@@ -140,9 +140,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # CORS (si frontend está en Netlify)
 CORS_ALLOWED_ORIGINS = [
-    "https://68f0f3a7f3af8353891577bd--inferharperasisstencia.netlify.app"
+    "https://68f0fa38e736330a2eac930a--animated-blini-aeee3f.netlify.app"
 ]
 APPEND_SLASH = False
+
 
 
 
