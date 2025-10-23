@@ -4,7 +4,7 @@ from .models import Student, Attendance
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ["id", "dni", "nombres", "apellidos", "numero", "foto"]
+        fields = ["id", "dni", "nombres", "apellidos", "numero", "foto_url"]
 
 class AttendanceSerializer(serializers.ModelSerializer):
     student = StudentSerializer(read_only=True)
@@ -16,3 +16,4 @@ class AttendanceSerializer(serializers.ModelSerializer):
 # Serializer auxiliar para recibir DNI en check-in/check-out
 class DniInputSerializer(serializers.Serializer):
     dni = serializers.CharField(max_length=8)
+
