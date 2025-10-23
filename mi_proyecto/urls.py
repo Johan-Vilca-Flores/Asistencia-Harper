@@ -19,7 +19,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from asistencia.views import CheckInView, CheckOutView, AttendanceListView, UploadStudentPhotoView
-from asistencia.serializers import AttendanceSerializer
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,3 +28,4 @@ urlpatterns = [
     path("api/attendances/", AttendanceListView.as_view(), name="attendance-list"),
     path("api/attendances/upload_photo/", UploadStudentPhotoView.as_view(), name="upload-student-photo"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
