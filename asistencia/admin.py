@@ -51,3 +51,9 @@ class StudentAdmin(admin.ModelAdmin):
         return "Sin foto"
     foto_miniatura.allow_tags = True
     foto_miniatura.short_description = "Foto"
+    
+@admin.register(Attendance)
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'student', 'date', 'check_in', 'check_out')
+    list_filter = ('date',)
+    search_fields = ('student__nombres', 'student__dni')
