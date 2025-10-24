@@ -129,80 +129,47 @@ class CheckInView(APIView):
             "attendance": AttendanceSerializer(att).data
         }, status=status.HTTP_201_CREATED)
 
-
 class CheckOutView(APIView):
     permission_classes = DEFAULT_PERMISSION
 
     def post(self, request, *args, **kwargs):
-        # Validamos el DNI
         ser = DniInputSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         dni = ser.validated_data["dni"]
 
-        # Buscamos el alumno
+        # Buscar alumno
         try:
             student = Student.objects.get(dni=dni)
         except Student.DoesNotExist:
-            return Response({"detail": "Alumno no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Alumno no encontrado"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         today = timezone.localdate()
 
-        # 🔹 Buscamos la última asistencia sin salida del día
-        att = Attendance.objects.filter(student=student, date=today, check_out__isnull=True).order_by("-check_in").first()
+        # 🔹 Buscar el último registro SIN salida
+        open_attendance = (
+            Attendance.objects.filter(student=student, date=today, check_out__isnull=True)
+            .order_by("-check_in")
+            .first()
+        )
 
-        if not att:
-            # Si no hay ingreso pendiente, no puede hacer salida
+        if not open_attendance:
             return Response({
-                "detail": "No hay un ingreso abierto para registrar salida."
+                "message": "No hay un ingreso abierto para registrar salida."
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        # 🔹 Registramos la salida
-        att.check_out = timezone.now()
-        att.save(update_fields=["check_out"])
+        # 🔹 Registrar la salida en el más reciente
+        open_attendance.check_out = timezone.now()
+        open_attendance.save(update_fields=["check_out"])
 
         return Response({
             "message": "Salida registrada correctamente",
-            "attendance": AttendanceSerializer(att).data
+            "attendance": AttendanceSerializer(open_attendance).data
         }, status=status.HTTP_200_OK)
 
 
-class CheckOutView(APIView):
-    permission_classes = DEFAULT_PERMISSION
-
-    def post(self, request, *args, **kwargs):
-        ser = DniInputSerializer(data=request.data)
-        ser.is_valid(raise_exception=True)
-        dni = ser.validated_data["dni"]
-
-        try:
-            student = Student.objects.get(dni=dni)
-        except Student.DoesNotExist:
-            return Response({"detail": "Alumno no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-        today = timezone.localdate()
-        try:
-            att = Attendance.objects.get(student=student, date=today)
-        except Attendance.DoesNotExist:
-            # Si no hay check-in previo, puedes crear el registro y marcar solo la salida
-            # o devolver error. Aquí devolvemos error para forzar flujo correcto:
-            return Response(
-                {"detail": "No existe asistencia de hoy para este alumno (primero haga check-in)."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if att.check_out is None:
-            att.check_out = timezone.now()
-            att.save(update_fields=["check_out"])
-            return Response({
-                "message": "Salida registrada",
-                "attendance": AttendanceSerializer(att).data
-            }, status=status.HTTP_200_OK)
-        else:
-            # idempotente: ya tenía check_out
-            return Response({
-                "message": "La salida de hoy ya estaba registrada",
-                "attendance": AttendanceSerializer(att).data
-            }, status=status.HTTP_200_OK)
 
 class AttendanceListView(ListAPIView):
     permission_classes = DEFAULT_PERMISSION
@@ -233,3 +200,4 @@ class AttendanceListView(ListAPIView):
             qs = qs.filter(student__dni=dni)
 
         return qs
+
