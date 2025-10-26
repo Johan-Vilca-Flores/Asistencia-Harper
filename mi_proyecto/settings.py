@@ -22,7 +22,9 @@ SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+TWILIO_WHATSAPP_FROM = os.environ.get("TWILIO_WHATSAPP_FROM")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ge-=lk1uy)xpa(z9-q_h(n1+rsp*_zywllk@$#+=4kfi*&(pkw'
 
@@ -158,6 +160,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://asistenciaharper2025.netlify.app",
     "http://127.0.0.1:5500",
 ]
+
 
 
 
