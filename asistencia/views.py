@@ -17,8 +17,13 @@ from django.http import JsonResponse
 from django.conf import settings
 from .notifications import send_whatsapp_message, build_attendance_message
 from zoneinfo import ZoneInfo
-
+from twilio.rest import Client
+import os
 from supabase import create_client
+client = Client(
+    os.environ.get("TWILIO_ACCOUNT_SID"),
+    os.environ.get("TWILIO_AUTH_TOKEN")
+)
 lima_tz = pytz.timezone("America/Lima")
 SUPABASE_URL = str(settings.SUPABASE_URL)
 SUPABASE_KEY = str(settings.SUPABASE_KEY)
@@ -235,3 +240,4 @@ class AttendanceListView(ListAPIView):
             qs = qs.filter(student__dni=dni)
 
         return qs
+
