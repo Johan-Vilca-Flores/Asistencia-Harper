@@ -1,4 +1,4 @@
-
+from django.utils import timezone
 from django.shortcuts import render
 from datetime import datetime
 from django.core.files.storage import default_storage
@@ -12,9 +12,14 @@ from .models import Student, Attendance
 from .serializers import DniInputSerializer, AttendanceSerializer
 from mi_proyecto.supabase_client import supabase
 import uuid
+import pytz
 from django.http import JsonResponse
 from django.conf import settings
+from .notifications import send_whatsapp_message, build_attendance_message
+from zoneinfo import ZoneInfo
+
 from supabase import create_client
+lima_tz = pytz.timezone("America/Lima")
 SUPABASE_URL = str(settings.SUPABASE_URL)
 SUPABASE_KEY = str(settings.SUPABASE_KEY)
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -57,6 +62,7 @@ class UploadStudentPhotoView(APIView):
 
             # Obtener URL pública (manejar tipo str o dict)
             public_data = supabase.storage.from_(bucket_name).get_public_url(filename)
+            
             if isinstance(public_data, str):
                 public_url = public_data
             else:
@@ -123,6 +129,18 @@ class CheckInView(APIView):
 
         # 🔹 Si no tiene uno abierto, creamos uno nuevo con el check_in actual
         att = Attendance.objects.create(student=student, date=today, check_in=timezone.now())
+        hora_lima = att.check_in.astimezone(ZoneInfo("America/Lima"))
+                # Enviar mensaje de WhatsApp
+        if student.numero:
+            msg = (
+                f"📢 Asistencia registrada\n\n"
+                f"👤 Alumno: {student.nombres} {student.apellidos}\n"
+                f"🆔 DNI: {student.dni}\n"
+                f"🕒 Ingreso: {hora_lima.strftime('%H:%M:%S')}\n"
+                f"📅 Fecha: {hora_lima.strftime('%d/%m/%Y')}"
+            )
+            send_whatsapp_message(student.numero, msg)
+
 
         return Response({
             "message": "Ingreso registrado correctamente",
@@ -163,6 +181,23 @@ class CheckOutView(APIView):
         # 🔹 Registrar la salida en el más reciente
         open_attendance.check_out = timezone.now()
         open_attendance.save(update_fields=["check_out"])
+        open_attendance.refresh_from_db()
+        check_in_time = open_attendance.check_in
+        check_out_time = open_attendance.check_out
+        hora_lima_ingreso = open_attendance.check_in.astimezone(ZoneInfo("America/Lima"))
+        hora_lima_salida = open_attendance.check_out.astimezone(ZoneInfo("America/Lima"))
+
+        # Enviar mensaje de WhatsApp
+        if student.numero:
+            msg = (
+                f"📢 Salida registrada\n\n"
+                f"👤 Alumno: {student.nombres} {student.apellidos}\n"
+                f"🆔 DNI: {student.dni}\n"
+                f"🏫 Ingreso: {hora_lima_ingreso.strftime('%H:%M:%S')}\n"
+                f"🚪 Salida: {hora_lima_salida.strftime('%H:%M:%S')}\n"
+                f"📅 Fecha: {today.strftime('%d/%m/%Y')}"
+            )
+            send_whatsapp_message(student.numero, msg)
 
         return Response({
             "message": "Salida registrada correctamente",
@@ -200,4 +235,3 @@ class AttendanceListView(ListAPIView):
             qs = qs.filter(student__dni=dni)
 
         return qs
-
